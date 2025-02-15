@@ -61,16 +61,16 @@ export default function Home() {
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      const newTasbih: Tasbih = {
+      const tasbihs = JSON.parse(localStorage.getItem('tasbihs') || '[]');
+      const newTasbih = {
         id: Date.now(),
         title: data.title,
         count: data.count,
         createdAt: new Date().toISOString(),
       };
-
-      const updatedTasbihs = [...tasbihs, newTasbih];
-      setTasbihs(updatedTasbihs);
-      localStorage.setItem('tasbihs', JSON.stringify(updatedTasbihs));
+      tasbihs.push(newTasbih);
+      localStorage.setItem('tasbihs', JSON.stringify(tasbihs));
+      setTasbihs(tasbihs); // Update the state
 
       setOpen(false);
       form.reset();
@@ -182,8 +182,8 @@ export default function Home() {
 
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {tasbihs.map((tasbih) => (
-            <div 
-              key={tasbih.id} 
+            <div
+              key={tasbih.id}
               className="bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer"
               onClick={() => navigate(`/counter/${tasbih.id}`)}
             >
