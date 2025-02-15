@@ -124,6 +124,12 @@ export default function Home() {
       const updatedTasbihs = tasbihs.filter(t => t.id !== id);
       localStorage.setItem('tasbihs', JSON.stringify(updatedTasbihs));
       setTasbihs(updatedTasbihs);
+
+      // Also clear history for this tasbih
+      const history = JSON.parse(localStorage.getItem('tasbih_history') || '[]');
+      const updatedHistory = history.filter((item: any) => item.tasbihId !== id);
+      localStorage.setItem('tasbih_history', JSON.stringify(updatedHistory));
+      
       toast({
         title: "Counter deleted",
         description: "The counter has been deleted successfully.",
