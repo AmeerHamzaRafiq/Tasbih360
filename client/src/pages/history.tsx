@@ -61,6 +61,23 @@ export default function History() {
   const totalItems = history.length || 1;
   const avgCount = Math.round(totalCount / totalItems);
 
+  // Calculate yearly totals
+  const yearlyTotals = history.reduce((acc, item) => {
+    const itemYear = new Date(item.timestamp).getFullYear().toString();
+    if (!acc[itemYear]) {
+      acc[itemYear] = { total: 0, items: {} };
+    }
+    acc[itemYear].total += item.current;
+    
+    const month = format(new Date(item.timestamp), "MMMM");
+    if (!acc[itemYear].items[month]) {
+      acc[itemYear].items[month] = 0;
+    }
+    acc[itemYear].items[month] += item.current;
+    
+    return acc;
+  }, {} as Record<string, { total: number, items: Record<string, number> }>);
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6">
@@ -73,18 +90,23 @@ export default function History() {
             <ChevronLeft className="h-4 w-4" />
             Back
           </Button>
-          <Select value={year} onValueChange={setYear}>
-            <SelectTrigger className="w-28">
-              <SelectValue placeholder="Year" />
-            </SelectTrigger>
-            <SelectContent>
-              {years.map((y) => (
-                <SelectItem key={y} value={y.toString()}>
-                  {y}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-4">
+            <div className="text-sm">
+              Year Total: {yearlyTotals[year]?.total || 0}
+            </div>
+            <Select value={year} onValueChange={setYear}>
+              <SelectTrigger className="w-28">
+                <SelectValue placeholder="Year" />
+              </SelectTrigger>
+              <SelectContent>
+                {years.map((y) => (
+                  <SelectItem key={y} value={y.toString()}>
+                    {y} ({yearlyTotals[y]?.total || 0})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 mb-8">
@@ -233,7 +255,12 @@ export default function History() {
               ).filter(([month]) => !selectedMonth || month === selectedMonth)
               .map(([month, items]) => (
                 <div key={month} className="space-y-2">
-                  <h3 className="font-semibold text-lg border-b pb-2">{month}</h3>
+                  <div className="flex justify-between items-center border-b pb-2">
+                    <h3 className="font-semibold text-lg">{month}</h3>
+                    <span className="text-sm text-muted-foreground">
+                      Month Total: {yearlyTotals[year]?.items[month] || 0}
+                    </span>
+                  </div>
                   {items.slice().reverse().map((item) => (
                     <div
                       key={item.id}
