@@ -56,7 +56,7 @@ export default function History() {
     items: data.items
   }));
 
-  const totalCount = filteredHistory.reduce((sum, item) => sum + item.current, 0);
+  const totalCount = history.reduce((sum, item) => sum + item.current, 0);
   const avgCount = Math.round(totalCount / (Object.keys(groupedByDate).length || 1));
 
   return (
