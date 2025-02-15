@@ -109,14 +109,6 @@ export default function History() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Daily Average</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{avgCount}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
               <CardTitle className="text-lg">Most Active Day</CardTitle>
             </CardHeader>
             <CardContent>
