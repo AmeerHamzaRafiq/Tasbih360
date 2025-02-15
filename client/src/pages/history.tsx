@@ -81,18 +81,20 @@ export default function History() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6">
-        <div className="text-xl font-bold mb-4 text-right">
-          Year Total: {yearlyTotals[year]?.total || 0}
-        </div>
         <div className="flex items-center justify-between mb-6">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate("/")}
-            className="flex items-center gap-2"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Back
-          </Button>
+          <div className="flex items-center gap-4">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate("/")}
+              className="flex items-center gap-2"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Back
+            </Button>
+            <div className="text-xl font-bold">
+              Year Total: {yearlyTotals[year]?.total || 0}
+            </div>
+          </div>
           <div className="flex items-center gap-4">
             <Select value={year} onValueChange={setYear}>
               <SelectTrigger className="w-28">
@@ -101,7 +103,7 @@ export default function History() {
               <SelectContent>
                 {years.map((y) => (
                   <SelectItem key={y} value={y.toString()}>
-                    {y} ({yearlyTotals[y]?.total || 0})
+                    {y}
                   </SelectItem>
                 ))}
               </SelectContent>
