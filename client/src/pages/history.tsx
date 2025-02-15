@@ -57,7 +57,8 @@ export default function History() {
   }));
 
   const totalCount = history.reduce((sum, item) => sum + item.current, 0);
-  const avgCount = Math.round(totalCount / (Object.keys(groupedByDate).length || 1));
+  const totalItems = history.length || 1;
+  const avgCount = Math.round(totalCount / totalItems);
 
   return (
     <div className="min-h-screen bg-background">
