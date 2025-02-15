@@ -18,6 +18,7 @@ type HistoryItem = {
 
 export default function History() {
   const [year, setYear] = useState(new Date().getFullYear().toString());
+  const [selectedMonth, setSelectedMonth] = useState<string>();
   const [, navigate] = useLocation();
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
@@ -178,6 +179,47 @@ export default function History() {
             <CardTitle>Recent Progress</CardTitle>
           </CardHeader>
           <CardContent>
+            <div className="flex items-center justify-between mb-4">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => {
+                  const months = Object.keys(
+                    filteredHistory.reduce((acc, item) => {
+                      const month = format(new Date(item.timestamp), "MMMM");
+                      acc[month] = true;
+                      return acc;
+                    }, {} as Record<string, boolean>)
+                  );
+                  const currentIndex = months.indexOf(selectedMonth || months[0]);
+                  if (currentIndex > 0) {
+                    setSelectedMonth(months[currentIndex - 1]);
+                  }
+                }}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <h3 className="font-semibold text-lg">{selectedMonth || format(new Date(), "MMMM")}</h3>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => {
+                  const months = Object.keys(
+                    filteredHistory.reduce((acc, item) => {
+                      const month = format(new Date(item.timestamp), "MMMM");
+                      acc[month] = true;
+                      return acc;
+                    }, {} as Record<string, boolean>)
+                  );
+                  const currentIndex = months.indexOf(selectedMonth || months[0]);
+                  if (currentIndex < months.length - 1) {
+                    setSelectedMonth(months[currentIndex + 1]);
+                  }
+                }}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
             <div className="space-y-4">
               {Object.entries(
                 filteredHistory.reduce((acc, item) => {
@@ -188,7 +230,8 @@ export default function History() {
                   acc[month].push(item);
                   return acc;
                 }, {} as Record<string, HistoryItem[]>)
-              ).map(([month, items]) => (
+              ).filter(([month]) => !selectedMonth || month === selectedMonth)
+              .map(([month, items]) => (
                 <div key={month} className="space-y-2">
                   <h3 className="font-semibold text-lg border-b pb-2">{month}</h3>
                   {items.slice().reverse().map((item) => (
