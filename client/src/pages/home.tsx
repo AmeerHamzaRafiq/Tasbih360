@@ -22,6 +22,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Plus, History } from "lucide-react";
 import { useLocation } from "wouter";
 import bgImage from "../assets/tasbeeh.jpg";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -35,6 +37,19 @@ export default function Home() {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
   const [, navigate] = useLocation();
+  const queryClient = useQueryClient();
+
+  const { data: tasbihs = [] } = useQuery({ 
+    queryKey: ["/api/tasbihs"]
+  });
+
+  const createTasbihMutation = useMutation({
+    mutationFn: (data: z.infer<typeof formSchema>) => 
+      apiRequest("POST", "/api/tasbihs", data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/tasbihs"] });
+    }
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,12 +61,11 @@ export default function Home() {
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      // Placeholder for API call
-      console.log('Creating counter:', data);
+      createTasbihMutation.mutate(data);
       setOpen(false);
       form.reset();
       toast({
-        title: "Counter created",
+        title: "Tasbih created",
         description: "Your new Tasbih counter has been created successfully.",
       });
     } catch (error) {
@@ -157,12 +171,17 @@ export default function Home() {
             </Dialog>
           </div>
         </div>
-        {/* Placeholder for CounterList */}
+
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="bg-white p-4 rounded-lg shadow">
-            <h3 className="text-lg font-medium">Sample Counter</h3>
-            <p className="text-gray-500">Click to start counting</p>
-          </div>
+          {tasbihs.map((tasbih) => (
+            <div key={tasbih.id} className="bg-white p-4 rounded-lg shadow">
+              <h3 className="text-lg font-medium">{tasbih.title}</h3>
+              <p className="text-gray-500">{tasbih.count} counts completed</p>
+              <p className="text-sm text-gray-400">
+                {new Date(tasbih.createdAt).toLocaleString()}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </div>

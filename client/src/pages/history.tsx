@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { format } from "date-fns";
-import type { Prayer } from "@shared/schema";
+import type { Tasbih } from "@shared/schema";
 import { useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { useLocation } from "wouter";
@@ -13,27 +13,26 @@ export default function History() {
   const [year, setYear] = useState(new Date().getFullYear().toString());
   const [, navigate] = useLocation();
 
-  const { data: prayers = [], isLoading } = useQuery<Prayer[]>({
-    queryKey: ["/api/prayers/1"], // Hardcoded userId for demo
+  const { data: tasbihs = [], isLoading } = useQuery<Tasbih[]>({
+    queryKey: ["/api/tasbihs"],
   });
 
-  const tasbihPrayers = prayers.filter(prayer => prayer.type === "tasbih");
   const years = Array.from(
-    new Set(tasbihPrayers.map((p) => new Date(p.createdAt).getFullYear()))
+    new Set(tasbihs.map((p) => new Date(p.createdAt).getFullYear()))
   ).sort();
 
-  const filteredPrayers = tasbihPrayers.filter((prayer) => {
-    const prayerYear = new Date(prayer.createdAt).getFullYear().toString();
-    return prayerYear === year;
+  const filteredTasbihs = tasbihs.filter((tasbih) => {
+    const tasbihYear = new Date(tasbih.createdAt).getFullYear().toString();
+    return tasbihYear === year;
   });
 
-  const chartData = filteredPrayers.map((prayer) => ({
-    date: format(new Date(prayer.createdAt), "MMM dd"),
-    count: prayer.count,
+  const chartData = filteredTasbihs.map((tasbih) => ({
+    date: format(new Date(tasbih.createdAt), "MMM dd"),
+    count: tasbih.count,
   }));
 
-  const totalCount = filteredPrayers.reduce((sum, p) => sum + p.count, 0);
-  const avgCount = Math.round(totalCount / (filteredPrayers.length || 1));
+  const totalCount = filteredTasbihs.reduce((sum, t) => sum + t.count, 0);
+  const avgCount = Math.round(totalCount / (filteredTasbihs.length || 1));
 
   if (isLoading) {
     return (
@@ -91,12 +90,12 @@ export default function History() {
               <CardTitle className="text-lg">Most Active Day</CardTitle>
             </CardHeader>
             <CardContent>
-              {filteredPrayers.length > 0 ? (
+              {filteredTasbihs.length > 0 ? (
                 <div className="text-xl font-bold">
                   {format(
                     new Date(
-                      filteredPrayers.reduce((max, p) =>
-                        p.count > max.count ? p : max
+                      filteredTasbihs.reduce((max, t) =>
+                        t.count > max.count ? t : max
                       ).createdAt
                     ),
                     "MMM dd"
@@ -143,24 +142,26 @@ export default function History() {
           <CardHeader>
             <CardTitle>Recent Tasbih History</CardTitle>
           </CardHeader>
-          <CardContent className="max-h-[400px] overflow-y-auto">
-            {filteredPrayers.slice().reverse().map((prayer) => (
-              <div
-                key={prayer.id}
-                className="flex justify-between items-center p-4 border-b last:border-b-0"
-              >
-                <div>
-                  <div className="font-medium">{prayer.title}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {format(new Date(prayer.createdAt), "PPp")}
+          <CardContent>
+            <div className="space-y-4">
+              {filteredTasbihs.slice().reverse().map((tasbih) => (
+                <div
+                  key={tasbih.id}
+                  className="flex justify-between items-center p-4 border rounded-lg"
+                >
+                  <div>
+                    <div className="font-medium">{tasbih.title}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {format(new Date(tasbih.createdAt), "PPp")}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-medium">{tasbih.count}</div>
+                    <div className="text-sm text-muted-foreground">counts</div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="font-medium">{prayer.count}</div>
-                  <div className="text-sm text-muted-foreground">counts</div>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -1,24 +1,23 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertPrayerSchema } from "@shared/schema";
+import { insertTasbihSchema } from "@shared/schema";
 
-export async function registerRoutes(app: Express): Promise<Server> {
-  app.get("/api/prayers/:userId", async (req, res) => {
-    const userId = parseInt(req.params.userId);
-    const prayers = await storage.getPrayersByUserId(userId);
-    res.json(prayers);
+export function registerRoutes(app: Express): Server {
+  app.get("/api/tasbihs", async (_req, res) => {
+    const tasbihs = await storage.getTasbihs();
+    res.json(tasbihs);
   });
 
-  app.post("/api/prayers", async (req, res) => {
-    const result = insertPrayerSchema.safeParse(req.body);
+  app.post("/api/tasbihs", async (req, res) => {
+    const result = insertTasbihSchema.safeParse(req.body);
     if (!result.success) {
       res.status(400).json({ error: result.error });
       return;
     }
 
-    const prayer = await storage.createPrayer(result.data);
-    res.json(prayer);
+    const tasbih = await storage.createTasbih(result.data);
+    res.json(tasbih);
   });
 
   const httpServer = createServer(app);
