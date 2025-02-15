@@ -36,7 +36,8 @@ export default function Counter() {
     localStorage.setItem(`tasbih_progress_${id}`, current.toString());
 
     // Save to history when progress is made
-    if (current > 0) {
+    // Only save to history when counter is completed
+    if (current === tasbih?.count) {
       const historyItem = {
         id: Date.now(),
         tasbihId: Number(id),
