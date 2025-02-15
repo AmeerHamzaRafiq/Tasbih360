@@ -19,7 +19,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, History } from "lucide-react";
+import { Plus, History, Pencil, Trash2 } from "lucide-react";
 import { useLocation } from "wouter";
 import bgImage from "../assets/tasbeeh.jpg";
 
@@ -40,6 +40,7 @@ type Tasbih = {
 
 export default function Home() {
   const [open, setOpen] = useState(false);
+  const [editTasbih, setEditTasbih] = useState<Tasbih | null>(null);
   const [tasbihs, setTasbihs] = useState<Tasbih[]>([]);
   const { toast } = useToast();
   const [, navigate] = useLocation();
@@ -59,32 +60,76 @@ export default function Home() {
     },
   });
 
+  useEffect(() => {
+    if (editTasbih) {
+      form.reset({
+        title: editTasbih.title,
+        count: editTasbih.count,
+      });
+    }
+  }, [editTasbih, form]);
+
   function onSubmit(data: z.infer<typeof formSchema>) {
     try {
       const tasbihs = JSON.parse(localStorage.getItem('tasbihs') || '[]');
-      const newTasbih = {
-        id: Date.now(),
-        title: data.title,
-        count: data.count,
-        createdAt: new Date().toISOString(),
-      };
-      tasbihs.push(newTasbih);
-      localStorage.setItem('tasbihs', JSON.stringify(tasbihs));
-      setTasbihs(tasbihs); // Update the state
+
+      if (editTasbih) {
+        // Update existing tasbih
+        const updatedTasbihs = tasbihs.map((t: Tasbih) =>
+          t.id === editTasbih.id ? { ...t, title: data.title, count: data.count } : t
+        );
+        localStorage.setItem('tasbihs', JSON.stringify(updatedTasbihs));
+        setTasbihs(updatedTasbihs);
+        setEditTasbih(null);
+        toast({
+          title: "Counter updated",
+          description: "Your Tasbih counter has been updated successfully.",
+        });
+      } else {
+        // Create new tasbih
+        const newTasbih = {
+          id: Date.now(),
+          title: data.title,
+          count: data.count,
+          createdAt: new Date().toISOString(),
+        };
+        tasbihs.push(newTasbih);
+        localStorage.setItem('tasbihs', JSON.stringify(tasbihs));
+        setTasbihs(tasbihs);
+        toast({
+          title: "Counter created",
+          description: "Your new Tasbih counter has been created successfully.",
+        });
+      }
 
       setOpen(false);
       form.reset();
-      toast({
-        title: "Counter created",
-        description: "Your new Tasbih counter has been created successfully.",
-      });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to create counter. Please try again.",
+        description: "Failed to save counter. Please try again.",
         variant: "destructive",
       });
     }
+  }
+
+  function handleDelete(id: number, e: React.MouseEvent) {
+    e.stopPropagation();
+    if (window.confirm("Are you sure you want to delete this counter?")) {
+      const updatedTasbihs = tasbihs.filter(t => t.id !== id);
+      localStorage.setItem('tasbihs', JSON.stringify(updatedTasbihs));
+      setTasbihs(updatedTasbihs);
+      toast({
+        title: "Counter deleted",
+        description: "The counter has been deleted successfully.",
+      });
+    }
+  }
+
+  function handleEdit(tasbih: Tasbih, e: React.MouseEvent) {
+    e.stopPropagation();
+    setEditTasbih(tasbih);
+    setOpen(true);
   }
 
   return (
@@ -114,7 +159,13 @@ export default function Home() {
               <History className="h-4 w-4" />
               <span className="hidden sm:inline">History</span>
             </Button>
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog open={open} onOpenChange={(isOpen) => {
+              setOpen(isOpen);
+              if (!isOpen) {
+                setEditTasbih(null);
+                form.reset();
+              }
+            }}>
               <DialogTrigger asChild>
                 <Button size="sm" className="flex items-center">
                   <Plus className="h-4 w-4" />
@@ -124,7 +175,9 @@ export default function Home() {
 
               <DialogContent className="sm:max-w-md mx-4">
                 <DialogHeader>
-                  <DialogTitle>Create new counter</DialogTitle>
+                  <DialogTitle>
+                    {editTasbih ? "Edit counter" : "Create new counter"}
+                  </DialogTitle>
                 </DialogHeader>
 
                 <Form {...form}>
@@ -167,11 +220,17 @@ export default function Home() {
                       <Button
                         type="button"
                         variant="outline"
-                        onClick={() => setOpen(false)}
+                        onClick={() => {
+                          setOpen(false);
+                          setEditTasbih(null);
+                          form.reset();
+                        }}
                       >
                         Cancel
                       </Button>
-                      <Button type="submit">Create</Button>
+                      <Button type="submit">
+                        {editTasbih ? "Save Changes" : "Create"}
+                      </Button>
                     </div>
                   </form>
                 </Form>
@@ -184,9 +243,27 @@ export default function Home() {
           {tasbihs.map((tasbih) => (
             <div
               key={tasbih.id}
-              className="bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer"
+              className="bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer relative group"
               onClick={() => navigate(`/counter/${tasbih.id}`)}
             >
+              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 mr-1"
+                  onClick={(e) => handleEdit(tasbih, e)}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-destructive"
+                  onClick={(e) => handleDelete(tasbih.id, e)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
               <h3 className="text-lg font-medium">{tasbih.title}</h3>
               <p className="text-gray-500">{tasbih.count} counts</p>
               <p className="text-sm text-gray-400">

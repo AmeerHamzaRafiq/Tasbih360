@@ -35,14 +35,25 @@ export default function History() {
     return tasbihYear === year;
   });
 
-  const chartData = filteredTasbihs.map((tasbih) => ({
-    date: format(new Date(tasbih.createdAt), "MMM dd"),
-    count: tasbih.count,
-    title: tasbih.title
+  // Group tasbihs by date for the chart
+  const groupedByDate = filteredTasbihs.reduce((acc, tasbih) => {
+    const date = format(new Date(tasbih.createdAt), "MMM dd");
+    if (!acc[date]) {
+      acc[date] = { total: 0, tasbihs: [] };
+    }
+    acc[date].total += tasbih.count;
+    acc[date].tasbihs.push(tasbih);
+    return acc;
+  }, {} as Record<string, { total: number; tasbihs: Tasbih[] }>);
+
+  const chartData = Object.entries(groupedByDate).map(([date, data]) => ({
+    date,
+    count: data.total,
+    tasbihs: data.tasbihs
   }));
 
   const totalCount = filteredTasbihs.reduce((sum, t) => sum + t.count, 0);
-  const avgCount = Math.round(totalCount / (filteredTasbihs.length || 1));
+  const avgCount = Math.round(totalCount / (Object.keys(groupedByDate).length || 1));
 
   return (
     <div className="min-h-screen bg-background">
@@ -92,16 +103,12 @@ export default function History() {
               <CardTitle className="text-lg">Most Active Day</CardTitle>
             </CardHeader>
             <CardContent>
-              {filteredTasbihs.length > 0 ? (
+              {chartData.length > 0 ? (
                 <div className="text-xl font-bold">
-                  {format(
-                    new Date(
-                      filteredTasbihs.reduce((max, t) =>
-                        t.count > max.count ? t : max
-                      ).createdAt
-                    ),
-                    "MMM dd"
-                  )}
+                  {Object.entries(groupedByDate)
+                    .reduce((max, [date, data]) => 
+                      data.total > max.total ? { date, total: data.total } : max
+                    , { date: '', total: 0 }).date}
                 </div>
               ) : (
                 <div className="text-xl font-bold">-</div>
@@ -128,11 +135,18 @@ export default function History() {
                   <Tooltip 
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
+                        const data = payload[0].payload;
                         return (
-                          <div className="bg-background p-2 border rounded-lg shadow-sm">
-                            <p className="font-medium">{payload[0].payload.title}</p>
-                            <p>Count: {payload[0].value}</p>
-                            <p>Date: {payload[0].payload.date}</p>
+                          <div className="bg-background p-3 border rounded-lg shadow-sm">
+                            <p className="font-medium mb-2">Date: {data.date}</p>
+                            <p className="mb-2">Total Count: {data.count}</p>
+                            <div className="space-y-1">
+                              {data.tasbihs.map((t: Tasbih) => (
+                                <p key={t.id} className="text-sm">
+                                  {t.title}: {t.count}
+                                </p>
+                              ))}
+                            </div>
                           </div>
                         );
                       }
@@ -143,7 +157,7 @@ export default function History() {
                   <Line
                     type="monotone"
                     dataKey="count"
-                    name="Tasbih Count"
+                    name="Total Count"
                     stroke="hsl(var(--primary))"
                     strokeWidth={2}
                   />
