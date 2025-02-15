@@ -13,6 +13,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import confetti from "canvas-confetti";
+import bgImage from "../assets/tasbeeh.jpg";
 
 export default function Counter() {
   const [, navigate] = useLocation();
