@@ -3,6 +3,7 @@ import { tasbihs, type Tasbih, type InsertTasbih } from "@shared/schema";
 export interface IStorage {
   createTasbih(tasbih: InsertTasbih): Promise<Tasbih>;
   getTasbihs(): Promise<Tasbih[]>;
+  completeTasbih(id: number, count: number): Promise<Tasbih | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -27,6 +28,19 @@ export class MemStorage implements IStorage {
 
   async getTasbihs(): Promise<Tasbih[]> {
     return Array.from(this.tasbihs.values());
+  }
+
+  async completeTasbih(id: number, count: number): Promise<Tasbih | undefined> {
+    const tasbih = this.tasbihs.get(id);
+    if (!tasbih) return undefined;
+
+    const completedTasbih: Tasbih = {
+      ...tasbih,
+      count,
+      createdAt: new Date(),
+    };
+    this.tasbihs.set(id, completedTasbih);
+    return completedTasbih;
   }
 }
 
