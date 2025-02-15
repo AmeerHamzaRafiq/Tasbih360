@@ -81,6 +81,9 @@ export default function History() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6">
+        <div className="text-xl font-bold mb-4 text-right">
+          Year Total: {yearlyTotals[year]?.total || 0}
+        </div>
         <div className="flex items-center justify-between mb-6">
           <Button 
             variant="ghost" 
@@ -91,9 +94,6 @@ export default function History() {
             Back
           </Button>
           <div className="flex items-center gap-4">
-            <div className="text-sm">
-              Year Total: {yearlyTotals[year]?.total || 0}
-            </div>
             <Select value={year} onValueChange={setYear}>
               <SelectTrigger className="w-28">
                 <SelectValue placeholder="Year" />
