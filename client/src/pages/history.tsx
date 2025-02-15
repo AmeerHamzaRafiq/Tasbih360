@@ -63,14 +63,28 @@ export default function History() {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6">
         <div className="flex items-center justify-between mb-6">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate("/")}
-            className="flex items-center gap-2"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Back
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate("/")}
+              className="flex items-center gap-2"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Back
+            </Button>
+            <Button 
+              variant="destructive"
+              onClick={() => {
+                if (window.confirm("Are you sure you want to clear all history?")) {
+                  localStorage.setItem('tasbih_history', '[]');
+                  setHistory([]);
+                }
+              }}
+              className="flex items-center gap-2"
+            >
+              Clear History
+            </Button>
+          </div>
           <Select value={year} onValueChange={setYear}>
             <SelectTrigger className="w-28">
               <SelectValue placeholder="Year" />
