@@ -3,6 +3,7 @@ import { useParams, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { CircularProgress } from "@/components/circular-progress";
 import { ChevronLeft, RotateCcw } from "lucide-react";
+import { DotLottiePlayer } from "@lottiefiles/react-lottie-player";
 import {
   Dialog,
   DialogContent,
@@ -116,6 +117,21 @@ export default function Counter() {
 
         <div className="flex-grow flex flex-col justify-center items-center">
           <CircularProgress current={current} total={tasbih.count} />
+          <div className="mt-[90px] sm:mt-16 md:mt-0 flex justify-center items-center relative mb-14 sm:mb-32">
+            <DotLottiePlayer
+              src="https://lottie.host/c8eec2f4-e353-4437-8b50-98f36400cd19/qz1AeuZFVQ.lottie"
+              autoplay
+              loop
+              style={{
+                width: "150px",
+                height: "150px",
+                position: "absolute",
+                left: "50%",
+                marginTop: "0px",
+                transform: "translateX(-50%)",
+              }}
+            />
+          </div>
         </div>
 
         <Dialog open={showComplete} onOpenChange={setShowComplete}>

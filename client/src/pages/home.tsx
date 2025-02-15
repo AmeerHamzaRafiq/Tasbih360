@@ -254,7 +254,7 @@ export default function Home() {
           {tasbihs.map((tasbih) => (
             <div
               key={tasbih.id}
-              className="bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer relative group"
+              className="bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow-lg hover:shadow-xl transition-all cursor-pointer relative group border border-gray-100"
               onClick={() => navigate(`/counter/${tasbih.id}`)}
             >
               <div className="absolute top-2 right-2 flex space-x-1">
