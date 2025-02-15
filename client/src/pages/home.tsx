@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,11 +19,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, History } from "lucide-react";
+import { Plus, History as HistoryIcon } from "lucide-react";
 import { useLocation } from "wouter";
 import bgImage from "../assets/tasbeeh.jpg";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -33,23 +31,25 @@ const formSchema = z.object({
     .max(10000, "Count cannot exceed 10,000"),
 });
 
+type Tasbih = {
+  id: number;
+  title: string;
+  count: number;
+  createdAt: string;
+};
+
 export default function Home() {
   const [open, setOpen] = useState(false);
+  const [tasbihs, setTasbihs] = useState<Tasbih[]>([]);
   const { toast } = useToast();
   const [, navigate] = useLocation();
-  const queryClient = useQueryClient();
 
-  const { data: tasbihs = [] } = useQuery({ 
-    queryKey: ["/api/tasbihs"]
-  });
-
-  const createTasbihMutation = useMutation({
-    mutationFn: (data: z.infer<typeof formSchema>) => 
-      apiRequest("POST", "/api/tasbihs", data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/tasbihs"] });
+  useEffect(() => {
+    const storedTasbihs = localStorage.getItem('tasbihs');
+    if (storedTasbihs) {
+      setTasbihs(JSON.parse(storedTasbihs));
     }
-  });
+  }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,7 +61,17 @@ export default function Home() {
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      createTasbihMutation.mutate(data);
+      const newTasbih: Tasbih = {
+        id: Date.now(),
+        title: data.title,
+        count: data.count,
+        createdAt: new Date().toISOString(),
+      };
+
+      const updatedTasbihs = [...tasbihs, newTasbih];
+      setTasbihs(updatedTasbihs);
+      localStorage.setItem('tasbihs', JSON.stringify(updatedTasbihs));
+
       setOpen(false);
       form.reset();
       toast({
@@ -103,7 +113,7 @@ export default function Home() {
               variant="outline"
               className="flex items-center gap-2"
             >
-              <History className="h-4 w-4" />
+              <HistoryIcon className="h-4 w-4" />
               <span className="hidden sm:inline">History</span>
             </Button>
             <Dialog open={open} onOpenChange={setOpen}>
@@ -174,9 +184,13 @@ export default function Home() {
 
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {tasbihs.map((tasbih) => (
-            <div key={tasbih.id} className="bg-white p-4 rounded-lg shadow">
+            <div 
+              key={tasbih.id} 
+              className="bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer"
+              onClick={() => navigate(`/counter/${tasbih.id}`)}
+            >
               <h3 className="text-lg font-medium">{tasbih.title}</h3>
-              <p className="text-gray-500">{tasbih.count} counts completed</p>
+              <p className="text-gray-500">{tasbih.count} counts</p>
               <p className="text-sm text-gray-400">
                 {new Date(tasbih.createdAt).toLocaleString()}
               </p>

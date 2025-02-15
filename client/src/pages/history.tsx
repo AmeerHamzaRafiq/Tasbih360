@@ -1,21 +1,30 @@
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { format } from "date-fns";
-import type { Tasbih } from "@shared/schema";
-import { useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { useLocation } from "wouter";
+
+type Tasbih = {
+  id: number;
+  title: string;
+  count: number;
+  createdAt: string;
+};
 
 export default function History() {
   const [year, setYear] = useState(new Date().getFullYear().toString());
   const [, navigate] = useLocation();
+  const [tasbihs, setTasbihs] = useState<Tasbih[]>([]);
 
-  const { data: tasbihs = [], isLoading } = useQuery<Tasbih[]>({
-    queryKey: ["/api/tasbihs"],
-  });
+  useEffect(() => {
+    const storedTasbihs = localStorage.getItem('tasbihs');
+    if (storedTasbihs) {
+      setTasbihs(JSON.parse(storedTasbihs));
+    }
+  }, []);
 
   const years = Array.from(
     new Set(tasbihs.map((p) => new Date(p.createdAt).getFullYear()))
@@ -33,14 +42,6 @@ export default function History() {
 
   const totalCount = filteredTasbihs.reduce((sum, t) => sum + t.count, 0);
   const avgCount = Math.round(totalCount / (filteredTasbihs.length || 1));
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-primary"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background">
