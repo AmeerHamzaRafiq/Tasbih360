@@ -195,8 +195,20 @@ export default function History() {
         </Card>
 
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Recent Progress</CardTitle>
+            <Button 
+              variant="destructive"
+              size="sm"
+              onClick={() => {
+                if (window.confirm("Are you sure you want to clear all history?")) {
+                  localStorage.setItem('tasbih_history', '[]');
+                  setHistory([]);
+                }
+              }}
+            >
+              Delete All
+            </Button>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
