@@ -3,7 +3,7 @@ import { useParams, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { CircularProgress } from "@/components/circular-progress";
 import { ChevronLeft, RotateCcw } from "lucide-react";
-import { DotLottiePlayer } from "@lottiefiles/react-lottie-player";
+import { Player as DotLottiePlayer } from "@lottiefiles/react-lottie-player";
 import {
   Dialog,
   DialogContent,
