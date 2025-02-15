@@ -72,18 +72,6 @@ export default function History() {
             <ChevronLeft className="h-4 w-4" />
             Back
           </Button>
-          <Button 
-            variant="destructive"
-            onClick={() => {
-              if (window.confirm("Are you sure you want to clear all history?")) {
-                localStorage.setItem('tasbih_history', '[]');
-                setHistory([]);
-              }
-            }}
-            className="flex items-center gap-2"
-          >
-            Clear History
-          </Button>
           <Select value={year} onValueChange={setYear}>
             <SelectTrigger className="w-28">
               <SelectValue placeholder="Year" />
@@ -98,22 +86,22 @@ export default function History() {
           </Select>
         </div>
 
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-6">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Total Progress</CardTitle>
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 mb-8">
+          <Card className="p-2">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-xl">Total Progress</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{totalCount}</div>
+              <div className="text-4xl font-bold">{totalCount}</div>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Most Active Day</CardTitle>
+          <Card className="p-2">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-xl">Most Active Day</CardTitle>
             </CardHeader>
             <CardContent>
               {chartData.length > 0 ? (
-                <div className="text-xl font-bold">
+                <div className="text-2xl font-bold">
                   {Object.entries(groupedByDate)
                     .reduce((max, [date, data]) => 
                       data.current > max.current ? { date, current: data.current } : max
