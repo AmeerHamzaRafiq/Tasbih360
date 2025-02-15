@@ -176,25 +176,25 @@ export default function History() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Recent Progress</CardTitle>
-            <Button 
-              variant="destructive"
-              size="sm"
-              onClick={() => {
-                if (window.confirm("Are you sure you want to clear all history?")) {
-                  localStorage.setItem('tasbih_history', '[]');
-                  setHistory([]);
-                }
-              }}
-            >
-              Delete All
-            </Button>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {filteredHistory.slice().reverse().map((item) => (
+              {Object.entries(
+                filteredHistory.reduce((acc, item) => {
+                  const month = format(new Date(item.timestamp), "MMMM");
+                  if (!acc[month]) {
+                    acc[month] = [];
+                  }
+                  acc[month].push(item);
+                  return acc;
+                }, {} as Record<string, HistoryItem[]>)
+              ).map(([month, items]) => (
+                <div key={month} className="space-y-2">
+                  <h3 className="font-semibold text-lg border-b pb-2">{month}</h3>
+                  {items.slice().reverse().map((item) => (
                 <div
                   key={item.id}
-                  className="flex justify-between items-center p-4 border rounded-lg"
+                  className="flex justify-between items-center p-4 border rounded-lg hover:bg-accent transition-colors"
                 >
                   <div>
                     <div className="font-medium">{item.title}</div>
