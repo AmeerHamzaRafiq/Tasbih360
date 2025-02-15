@@ -192,39 +192,39 @@ export default function History() {
                 <div key={month} className="space-y-2">
                   <h3 className="font-semibold text-lg border-b pb-2">{month}</h3>
                   {items.slice().reverse().map((item) => (
-                <div
-                  key={item.id}
-                  className="flex justify-between items-center p-4 border rounded-lg hover:bg-accent transition-colors"
-                >
-                  <div>
-                    <div className="font-medium">{item.title}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {format(new Date(item.timestamp), "PPp")}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
-                      <div className="font-medium">
-                        {item.current}/{item.total}
-                      </div>
-                      <div className="text-sm text-muted-foreground">progress</div>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-red-500 hover:text-red-700"
-                      onClick={() => {
-                        const newHistory = history.filter(h => h.id !== item.id);
-                        localStorage.setItem('tasbih_history', JSON.stringify(newHistory));
-                        setHistory(newHistory);
-                      }}
+                    <div
+                      key={item.id}
+                      className="flex justify-between items-center p-4 border rounded-lg hover:bg-accent transition-colors"
                     >
-                      ×
-                    </Button>
-                  </div>
+                      <div>
+                        <div className="font-medium">{item.title}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {format(new Date(item.timestamp), "PPp")}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <div className="font-medium">
+                            {item.current}/{item.total}
+                          </div>
+                          <div className="text-sm text-muted-foreground">progress</div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-500 hover:text-red-700"
+                          onClick={() => {
+                            const newHistory = history.filter(h => h.id !== item.id);
+                            localStorage.setItem('tasbih_history', JSON.stringify(newHistory));
+                            setHistory(newHistory);
+                          }}
+                        >
+                          ×
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
           </CardContent>
         </Card>
       </div>
