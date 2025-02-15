@@ -201,6 +201,18 @@ export default function History() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Recent Progress</CardTitle>
+            <Button 
+              variant="destructive"
+              size="sm"
+              onClick={() => {
+                if (window.confirm('Are you sure you want to delete all history?')) {
+                  localStorage.setItem('tasbih_history', '[]');
+                  setHistory([]);
+                }
+              }}
+            >
+              Delete All
+            </Button>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between mb-4">
