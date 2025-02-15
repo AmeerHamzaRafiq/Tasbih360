@@ -7,52 +7,56 @@ import { format } from "date-fns";
 import { ChevronLeft } from "lucide-react";
 import { useLocation } from "wouter";
 
-type Tasbih = {
+type HistoryItem = {
   id: number;
+  tasbihId: number;
   title: string;
-  count: number;
-  createdAt: string;
+  total: number;
+  current: number;
+  timestamp: string;
 };
 
 export default function History() {
   const [year, setYear] = useState(new Date().getFullYear().toString());
   const [, navigate] = useLocation();
-  const [tasbihs, setTasbihs] = useState<Tasbih[]>([]);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
 
   useEffect(() => {
-    const storedTasbihs = localStorage.getItem('tasbihs');
-    if (storedTasbihs) {
-      setTasbihs(JSON.parse(storedTasbihs));
+    const storedHistory = localStorage.getItem('tasbih_history');
+    if (storedHistory) {
+      setHistory(JSON.parse(storedHistory));
     }
   }, []);
 
   const years = Array.from(
-    new Set(tasbihs.map((p) => new Date(p.createdAt).getFullYear()))
+    new Set(history.map((item) => new Date(item.timestamp).getFullYear()))
   ).sort();
 
-  const filteredTasbihs = tasbihs.filter((tasbih) => {
-    const tasbihYear = new Date(tasbih.createdAt).getFullYear().toString();
-    return tasbihYear === year;
+  const filteredHistory = history.filter((item) => {
+    const itemYear = new Date(item.timestamp).getFullYear().toString();
+    return itemYear === year;
   });
 
-  // Group tasbihs by date for the chart
-  const groupedByDate = filteredTasbihs.reduce((acc, tasbih) => {
-    const date = format(new Date(tasbih.createdAt), "MMM dd");
+  // Group history by date
+  const groupedByDate = filteredHistory.reduce((acc, item) => {
+    const date = format(new Date(item.timestamp), "MMM dd");
     if (!acc[date]) {
-      acc[date] = { total: 0, tasbihs: [] };
+      acc[date] = { total: 0, current: 0, items: [] };
     }
-    acc[date].total += tasbih.count;
-    acc[date].tasbihs.push(tasbih);
+    acc[date].total += item.total;
+    acc[date].current += item.current;
+    acc[date].items.push(item);
     return acc;
-  }, {} as Record<string, { total: number; tasbihs: Tasbih[] }>);
+  }, {} as Record<string, { total: number; current: number; items: HistoryItem[] }>);
 
   const chartData = Object.entries(groupedByDate).map(([date, data]) => ({
     date,
-    count: data.total,
-    tasbihs: data.tasbihs
+    total: data.total,
+    completed: data.current,
+    items: data.items
   }));
 
-  const totalCount = filteredTasbihs.reduce((sum, t) => sum + t.count, 0);
+  const totalCount = filteredHistory.reduce((sum, item) => sum + item.current, 0);
   const avgCount = Math.round(totalCount / (Object.keys(groupedByDate).length || 1));
 
   return (
@@ -84,7 +88,7 @@ export default function History() {
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-6">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Total Tasbih Count</CardTitle>
+              <CardTitle className="text-lg">Total Progress</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{totalCount}</div>
@@ -107,8 +111,8 @@ export default function History() {
                 <div className="text-xl font-bold">
                   {Object.entries(groupedByDate)
                     .reduce((max, [date, data]) => 
-                      data.total > max.total ? { date, total: data.total } : max
-                    , { date: '', total: 0 }).date}
+                      data.current > max.current ? { date, current: data.current } : max
+                    , { date: '', current: 0 }).date}
                 </div>
               ) : (
                 <div className="text-xl font-bold">-</div>
@@ -119,7 +123,7 @@ export default function History() {
 
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Daily Tasbih Counts</CardTitle>
+            <CardTitle>Daily Progress</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-[300px] sm:h-[400px]">
@@ -139,11 +143,12 @@ export default function History() {
                         return (
                           <div className="bg-background p-3 border rounded-lg shadow-sm">
                             <p className="font-medium mb-2">Date: {data.date}</p>
-                            <p className="mb-2">Total Count: {data.count}</p>
+                            <p className="mb-1">Total Goal: {data.total}</p>
+                            <p className="mb-2">Completed: {data.completed}</p>
                             <div className="space-y-1">
-                              {data.tasbihs.map((t: Tasbih) => (
-                                <p key={t.id} className="text-sm">
-                                  {t.title}: {t.count}
+                              {data.items.map((item: HistoryItem) => (
+                                <p key={item.id} className="text-sm">
+                                  {item.title}: {item.current}/{item.total}
                                 </p>
                               ))}
                             </div>
@@ -156,8 +161,16 @@ export default function History() {
                   <Legend />
                   <Line
                     type="monotone"
-                    dataKey="count"
-                    name="Total Count"
+                    dataKey="total"
+                    name="Total Goal"
+                    stroke="hsl(var(--primary))"
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="completed"
+                    name="Completed"
                     stroke="hsl(var(--primary))"
                     strokeWidth={2}
                   />
@@ -169,24 +182,26 @@ export default function History() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Recent Tasbih History</CardTitle>
+            <CardTitle>Recent Progress</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {filteredTasbihs.slice().reverse().map((tasbih) => (
+              {filteredHistory.slice().reverse().map((item) => (
                 <div
-                  key={tasbih.id}
+                  key={item.id}
                   className="flex justify-between items-center p-4 border rounded-lg"
                 >
                   <div>
-                    <div className="font-medium">{tasbih.title}</div>
+                    <div className="font-medium">{item.title}</div>
                     <div className="text-sm text-muted-foreground">
-                      {format(new Date(tasbih.createdAt), "PPp")}
+                      {format(new Date(item.timestamp), "PPp")}
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-medium">{tasbih.count}</div>
-                    <div className="text-sm text-muted-foreground">counts</div>
+                    <div className="font-medium">
+                      {item.current}/{item.total}
+                    </div>
+                    <div className="text-sm text-muted-foreground">progress</div>
                   </div>
                 </div>
               ))}

@@ -38,6 +38,11 @@ type Tasbih = {
   createdAt: string;
 };
 
+const buttonStyles = {
+  editButton: "h-8 w-8 text-gray-600 hover:text-primary transition-colors duration-200",
+  deleteButton: "h-8 w-8 text-gray-600 hover:text-red-500 transition-colors duration-200"
+};
+
 export default function Home() {
   const [open, setOpen] = useState(false);
   const [editTasbih, setEditTasbih] = useState<Tasbih | null>(null);
@@ -239,18 +244,18 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
           {tasbihs.map((tasbih) => (
             <div
               key={tasbih.id}
               className="bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer relative group"
               onClick={() => navigate(`/counter/${tasbih.id}`)}
             >
-              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute top-2 right-2 flex space-x-1">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 mr-1"
+                  className={buttonStyles.editButton}
                   onClick={(e) => handleEdit(tasbih, e)}
                 >
                   <Pencil className="h-4 w-4" />
@@ -258,15 +263,15 @@ export default function Home() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-destructive"
+                  className={buttonStyles.deleteButton}
                   onClick={(e) => handleDelete(tasbih.id, e)}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
-              <h3 className="text-lg font-medium">{tasbih.title}</h3>
-              <p className="text-gray-500">{tasbih.count} counts</p>
-              <p className="text-sm text-gray-400">
+              <h3 className="text-lg font-medium mb-1">{tasbih.title}</h3>
+              <p className="text-gray-500">Progress: 0/{tasbih.count}</p>
+              <p className="text-sm text-gray-400 mt-1">
                 {new Date(tasbih.createdAt).toLocaleString()}
               </p>
             </div>

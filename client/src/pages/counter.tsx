@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { CircularProgress } from "@/components/circular-progress";
@@ -23,6 +23,35 @@ export default function Counter() {
   const tasbihs = JSON.parse(localStorage.getItem('tasbihs') || '[]');
   const tasbih = tasbihs.find((t: any) => t.id === Number(id));
 
+  // Load saved progress when component mounts
+  useEffect(() => {
+    const progress = localStorage.getItem(`tasbih_progress_${id}`);
+    if (progress) {
+      setCurrent(parseInt(progress));
+    }
+  }, [id]);
+
+  // Save progress when component unmounts or when current changes
+  useEffect(() => {
+    localStorage.setItem(`tasbih_progress_${id}`, current.toString());
+
+    // Save to history when progress is made
+    if (current > 0) {
+      const historyItem = {
+        id: Date.now(),
+        tasbihId: Number(id),
+        title: tasbih?.title,
+        total: tasbih?.count,
+        current: current,
+        timestamp: new Date().toISOString()
+      };
+
+      const history = JSON.parse(localStorage.getItem('tasbih_history') || '[]');
+      history.push(historyItem);
+      localStorage.setItem('tasbih_history', JSON.stringify(history));
+    }
+  }, [current, id, tasbih]);
+
   if (!tasbih) {
     navigate("/");
     return null;
@@ -36,12 +65,6 @@ export default function Counter() {
 
     if (newCount === tasbih.count) {
       setShowComplete(true);
-      // Update in localStorage
-      const updatedTasbihs = tasbihs.map((t: any) => 
-        t.id === tasbih.id ? { ...t, count: newCount } : t
-      );
-      localStorage.setItem('tasbihs', JSON.stringify(updatedTasbihs));
-
       confetti({
         particleCount: 100,
         spread: 70,
@@ -53,6 +76,7 @@ export default function Counter() {
   function resetCounter() {
     setCurrent(0);
     setShowComplete(false);
+    localStorage.removeItem(`tasbih_progress_${id}`);
   }
 
   return (
