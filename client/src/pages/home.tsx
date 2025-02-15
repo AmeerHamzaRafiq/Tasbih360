@@ -19,7 +19,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, History as HistoryIcon } from "lucide-react";
+import { Plus, History } from "lucide-react";
 import { useLocation } from "wouter";
 import bgImage from "../assets/tasbeeh.jpg";
 
@@ -75,7 +75,7 @@ export default function Home() {
       setOpen(false);
       form.reset();
       toast({
-        title: "Tasbih created",
+        title: "Counter created",
         description: "Your new Tasbih counter has been created successfully.",
       });
     } catch (error) {
@@ -101,9 +101,7 @@ export default function Home() {
       <div className="container p-4 sm:p-6 md:p-8 max-w-2xl mx-auto flex-grow">
         <div className="bg-gray-200/90 backdrop-blur-sm mb-7 py-4 px-4 w-full flex justify-between rounded-md shadow-md">
           <div className="my-[-0.6rem]">
-            <h1 className="racing-sans-one text-2xl sm:text-3xl mt-2 font-light">
-              Tasbih
-            </h1>
+            <h1 className="racing-sans-one text-2xl sm:text-3xl mt-2 font-light">Tasbih</h1>
           </div>
 
           <div className="flex gap-2">
@@ -113,7 +111,7 @@ export default function Home() {
               variant="outline"
               className="flex items-center gap-2"
             >
-              <HistoryIcon className="h-4 w-4" />
+              <History className="h-4 w-4" />
               <span className="hidden sm:inline">History</span>
             </Button>
             <Dialog open={open} onOpenChange={setOpen}>

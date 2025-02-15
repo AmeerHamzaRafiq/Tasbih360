@@ -38,6 +38,7 @@ export default function History() {
   const chartData = filteredTasbihs.map((tasbih) => ({
     date: format(new Date(tasbih.createdAt), "MMM dd"),
     count: tasbih.count,
+    title: tasbih.title
   }));
 
   const totalCount = filteredTasbihs.reduce((sum, t) => sum + t.count, 0);
@@ -111,7 +112,7 @@ export default function History() {
 
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Tasbih Trends</CardTitle>
+            <CardTitle>Daily Tasbih Counts</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-[300px] sm:h-[400px]">
@@ -124,7 +125,20 @@ export default function History() {
                     interval="preserveStartEnd"
                   />
                   <YAxis tick={{ fontSize: 12 }} />
-                  <Tooltip />
+                  <Tooltip 
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div className="bg-background p-2 border rounded-lg shadow-sm">
+                            <p className="font-medium">{payload[0].payload.title}</p>
+                            <p>Count: {payload[0].value}</p>
+                            <p>Date: {payload[0].payload.date}</p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
                   <Legend />
                   <Line
                     type="monotone"
