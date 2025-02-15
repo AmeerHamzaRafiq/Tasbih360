@@ -63,28 +63,26 @@ export default function History() {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6">
         <div className="flex items-center justify-between mb-6">
-          <div className="flex gap-2">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate("/")}
-              className="flex items-center gap-2"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              Back
-            </Button>
-            <Button 
-              variant="destructive"
-              onClick={() => {
-                if (window.confirm("Are you sure you want to clear all history?")) {
-                  localStorage.setItem('tasbih_history', '[]');
-                  setHistory([]);
-                }
-              }}
-              className="flex items-center gap-2"
-            >
-              Clear History
-            </Button>
-          </div>
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate("/")}
+            className="flex items-center gap-2"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <Button 
+            variant="destructive"
+            onClick={() => {
+              if (window.confirm("Are you sure you want to clear all history?")) {
+                localStorage.setItem('tasbih_history', '[]');
+                setHistory([]);
+              }
+            }}
+            className="flex items-center gap-2"
+          >
+            Clear History
+          </Button>
           <Select value={year} onValueChange={setYear}>
             <SelectTrigger className="w-28">
               <SelectValue placeholder="Year" />
@@ -223,11 +221,25 @@ export default function History() {
                       {format(new Date(item.timestamp), "PPp")}
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="font-medium">
-                      {item.current}/{item.total}
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      <div className="font-medium">
+                        {item.current}/{item.total}
+                      </div>
+                      <div className="text-sm text-muted-foreground">progress</div>
                     </div>
-                    <div className="text-sm text-muted-foreground">progress</div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-red-500 hover:text-red-700"
+                      onClick={() => {
+                        const newHistory = history.filter(h => h.id !== item.id);
+                        localStorage.setItem('tasbih_history', JSON.stringify(newHistory));
+                        setHistory(newHistory);
+                      }}
+                    >
+                      ×
+                    </Button>
                   </div>
                 </div>
               ))}
