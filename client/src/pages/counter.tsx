@@ -12,30 +12,16 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import confetti from "canvas-confetti";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import type { Tasbih } from "@shared/schema";
-import { DotLottiePlayer } from "@dotlottie/react-player";
 
 export default function Counter() {
   const [, navigate] = useLocation();
   const { id } = useParams();
   const [showComplete, setShowComplete] = useState(false);
   const [current, setCurrent] = useState(0);
-  const queryClient = useQueryClient();
 
-  const { data: tasbihs = [] } = useQuery<Tasbih[]>({ 
-    queryKey: ["/api/tasbihs"]
-  });
-  const tasbih = tasbihs.find(t => t.id === Number(id));
-
-  const updateTasbihMutation = useMutation({
-    mutationFn: (data: { id: number, count: number }) => 
-      apiRequest("POST", `/api/tasbihs/${data.id}/complete`, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/tasbihs"] });
-    }
-  });
+  // Get tasbih data from localStorage
+  const tasbihs = JSON.parse(localStorage.getItem('tasbihs') || '[]');
+  const tasbih = tasbihs.find((t: any) => t.id === Number(id));
 
   if (!tasbih) {
     navigate("/");
@@ -44,13 +30,18 @@ export default function Counter() {
 
   function increment() {
     if (current >= tasbih.count) return;
-    
+
     const newCount = current + 1;
     setCurrent(newCount);
-    
+
     if (newCount === tasbih.count) {
       setShowComplete(true);
-      updateTasbihMutation.mutate({ id: tasbih.id, count: newCount });
+      // Update in localStorage
+      const updatedTasbihs = tasbihs.map((t: any) => 
+        t.id === tasbih.id ? { ...t, count: newCount } : t
+      );
+      localStorage.setItem('tasbihs', JSON.stringify(updatedTasbihs));
+
       confetti({
         particleCount: 100,
         spread: 70,
@@ -100,15 +91,6 @@ export default function Counter() {
 
         <div className="flex-grow flex flex-col justify-center items-center">
           <CircularProgress current={current} total={tasbih.count} />
-
-          <div className="mt-[90px] sm:mt-16 md:mt-0 flex justify-center items-center relative mb-14 sm:mb-32">
-            <DotLottiePlayer
-              src="https://lottie.host/c8eec2f4-e353-4437-8b50-98f36400cd19/qz1AeuZFVQ.lottie"
-              autoplay
-              loop
-              style={{ width: "150px", height: "150px", position: "absolute", left: "50%", marginTop: "0px", transform: "translateX(-50%)" }}
-            />
-          </div>
         </div>
 
         <Dialog open={showComplete} onOpenChange={setShowComplete}>
