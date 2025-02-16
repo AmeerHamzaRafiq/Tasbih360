@@ -168,7 +168,7 @@ export default function Home() {
       <div className="container p-4 sm:p-6 md:p-8 max-w-2xl mx-auto flex-grow mt-4">
         <div className="bg-gray-200 backdrop-blur-sm mb-6 py-4 px-4 w-full flex justify-between rounded-md shadow-md">
           <div>
-            <h1 className="racing-sans-one text-3xl font-light">Tasbih</h1>
+            <h1 className="racing-sans-one text-3xl font-light">Tasbih360°</h1>
           </div>
 
           <div className="flex gap-2">
