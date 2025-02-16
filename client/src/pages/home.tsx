@@ -168,7 +168,7 @@ export default function Home() {
       <div className="container p-4 sm:p-6 md:p-8 max-w-2xl mx-auto flex-grow mt-4">
         <div className="bg-gray-200 backdrop-blur-sm mb-6 py-4 px-4 w-full flex justify-between rounded-md shadow-md">
           <div>
-            <h1 className="racing-sans-one text-3xl mt-2 font-light">Tasbih</h1>
+            <h1 className="racing-sans-one text-3xl font-light">Tasbih</h1>
           </div>
 
           <div className="flex gap-2">
@@ -198,7 +198,7 @@ export default function Home() {
                 </Button>
               </DialogTrigger>
 
-              <DialogContent className="sm:max-w-md mx-4">
+              <DialogContent className="sm:max-w-md max-w-md mx-auto p-6 mt-2 rounded-2xl shadow-lg bg-white overflow-y-auto max-h-[80vh] fixed top-0 left-1/2 -translate-x-1/2 translate-y-0">
                 <DialogHeader>
                   <DialogTitle>
                     {editTasbih ? "Edit counter" : "Create new counter"}
@@ -290,7 +290,7 @@ export default function Home() {
                 className="bg-slate-200 backdrop-blur-sm p-4 rounded-lg shadow-lg hover:shadow-xl transition-all cursor-pointer relative group border border-gray-300"
                 onClick={() => navigate(`/counter/${tasbih.id}`)}
               >
-                <div className="absolute top-2 right-2 flex gap-2 space-x-1 mt-8 mr-2">
+                <div className="absolute top-2 right-2 flex gap-2 space-x-1 mt-6 mr-2">
                   <Button
                     variant="secondary"
                     size="icon"
@@ -309,9 +309,9 @@ export default function Home() {
                     <X className="h-5 w-5 text-white" />
                   </Button>
                 </div>
-                <h3 className="text-lg font-medium mb-1">{tasbih.title}</h3>
+                <h3 className="text-lg font-medium">{tasbih.title}</h3>
                 <p className="text-gray-500">Progress: 0/{tasbih.count}</p>
-                <p className="text-sm text-gray-400 mt-1">
+                <p className="text-sm text-gray-400">
                   {new Date(tasbih.createdAt).toLocaleString()}
                 </p>
               </div>
@@ -320,8 +320,6 @@ export default function Home() {
         )}
       </div>
 
-
-      
       <footer className="text-gray-300 text-center mb-5">
         <p className="text-sm">
           &copy; {new Date().getFullYear()} Muhammad Ameer Hamza.

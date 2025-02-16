@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import * as React from "react";
 
 interface CircularProgressProps {
   current: number;
@@ -6,46 +6,48 @@ interface CircularProgressProps {
 }
 
 export function CircularProgress({ current, total }: CircularProgressProps) {
-  const progress = (current / total) * 100;
-  const strokeWidth = 15;
-  const size = 200;
-  const radius = (size - strokeWidth) / 2;
-  const circumference = radius * 2 * Math.PI;
-  const offset = circumference - (progress / 100) * circumference;
+  const percentage = Math.round((current / total) * 100);
+  const radius = 120;
+  const strokeWidth = 10;
+  const normalizedRadius = radius - strokeWidth * 2;
+  const circumference = normalizedRadius * 2 * Math.PI;
+  const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
-    <div className="relative flex items-center justify-center">
-      <svg width={size} height={size} className="-rotate-90">
-        {/* Background circle */}
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          className="stroke-muted"
-          strokeWidth={strokeWidth}
-          fill="none"
-        />
-        {/* Progress circle */}
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          className="stroke-primary transition-all duration-300 ease-in-out"
-          strokeWidth={strokeWidth}
-          fill="none"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          strokeLinecap="round"
-        />
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-        <span className={cn(
-          "text-4xl font-bold",
-          current === total && "text-primary"
-        )}>
-          {current}
-        </span>
-        <span className="text-lg text-muted-foreground">/ {total}</span>
+    <div className="flex flex-col items-center justify-center cursor-pointer">
+      <div className="relative w-[240px] h-[240px] mt-[-150px] md:mt-0">
+        <svg
+          height={radius * 2}
+          width={radius * 2}
+          className="transform -rotate-90"
+        >
+          {/* Background circle */}
+          <circle
+            stroke="gray"
+            // fill="transparent"
+            strokeWidth={strokeWidth}
+            r={normalizedRadius}
+            cx={radius}
+            cy={radius}
+          />
+          {/* Progress circle */}
+          <circle
+            fill="transparent"
+            strokeWidth={strokeWidth}
+            strokeDasharray={circumference + " " + circumference}
+            style={{ strokeDashoffset }}
+            r={normalizedRadius}
+            cx={radius}
+            cy={radius}
+            className="stroke-red-700 transition-all duration-300 ease-in-out opacity-80"
+          />
+        </svg>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center">
+            <span className="text-3xl font-bold  text-red-700">{current}</span>
+            <span className="text-3xl text-muted-foreground"> / {total}</span>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { useParams, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { CircularProgress } from "@/components/circular-progress";
 import { ChevronLeft, RotateCcw } from "lucide-react";
-import { Player as DotLottiePlayer } from "@lottiefiles/react-lottie-player";
+import { DotLottiePlayer } from "@dotlottie/react-player";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import confetti from "canvas-confetti";
-import bgImage from "../assets/tasbeeh.jpg";
+import bgImage from "../assets/bg.png";
 
 export default function Counter() {
   const [, navigate] = useLocation();
@@ -22,7 +22,7 @@ export default function Counter() {
   const [current, setCurrent] = useState(0);
 
   // Get tasbih data from localStorage
-  const tasbihs = JSON.parse(localStorage.getItem('tasbihs') || '[]');
+  const tasbihs = JSON.parse(localStorage.getItem("tasbihs") || "[]");
   const tasbih = tasbihs.find((t: any) => t.id === Number(id));
 
   // Load saved progress when component mounts
@@ -46,12 +46,14 @@ export default function Counter() {
         title: tasbih?.title,
         total: tasbih?.count,
         current: current,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
-      const history = JSON.parse(localStorage.getItem('tasbih_history') || '[]');
+      const history = JSON.parse(
+        localStorage.getItem("tasbih_history") || "[]"
+      );
       history.push(historyItem);
-      localStorage.setItem('tasbih_history', JSON.stringify(history));
+      localStorage.setItem("tasbih_history", JSON.stringify(history));
     }
   }, [current, id, tasbih]);
 
@@ -71,7 +73,7 @@ export default function Counter() {
       confetti({
         particleCount: 100,
         spread: 70,
-        origin: { y: 0.6 }
+        origin: { y: 0.6 },
       });
     }
   }
@@ -83,12 +85,18 @@ export default function Counter() {
   }
 
   return (
-    <div 
+    <div
+      style={{
+        backgroundImage: `url(${bgImage})`,
+
+        backgroundPosition: "center",
+        backgroundRepeat: "repeat",
+      }}
       className="min-h-screen bg-background flex flex-col touch-none"
       onClick={increment}
     >
       <div className="container p-4 sm:p-6 md:p-8 max-w-2xl mx-auto w-full flex-grow flex flex-col">
-        <div 
+        <div
           className="bg-muted/20 backdrop-blur-sm py-4 px-4 w-full rounded-md shadow-sm flex items-center justify-between mb-4 sm:mb-8"
           onClick={(e) => e.stopPropagation()}
         >
