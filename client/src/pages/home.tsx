@@ -218,7 +218,7 @@ export default function Home() {
                           <FormLabel>Title</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Zikr, Durood or any other prayer here !!!"
+                              placeholder="Enter a Durood or Tasbih of your choice…"
                               {...field}
                             />
                           </FormControl>
