@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -105,7 +105,7 @@ export default function Home() {
           count: data.count,
           createdAt: new Date().toISOString(),
         };
-        tasbihs.push(newTasbih);
+        tasbihs.unshift(newTasbih);
         localStorage.setItem("tasbihs", JSON.stringify(tasbihs));
         setTasbihs(tasbihs);
         toast({

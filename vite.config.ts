@@ -17,15 +17,18 @@ export default defineConfig({
     themePlugin(),
     VitePWA({
       registerType: "autoUpdate",
-      injectRegister: "auto", // Ensure service worker registration
+      injectRegister: "auto",
+
       devOptions: {
-        enabled: true, // Enable in development
+        enabled: true,
       },
-      manifest: {
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
+      },
+     manifest: {
         name: "Tasbih360",
         short_name: "Tasbih360",
-        description:
-          "Tasbih360 is a modern and convenient digital Tasbih counter app designed for seamless prayer and zikr tracking. With an intuitive interface, real-time progress tracking, and a detailed history feature, you can revisit your zikr journey and stay connected to your spiritual goals.",
+        description: "Tasbih360 is a modern and convenient digital Tasbih counter app...",
         theme_color: "#141414",
         icons: [
           {
@@ -50,13 +53,14 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "client", "src"),
+      "@": path.resolve(__dirname, "client/src"),
       "@shared": path.resolve(__dirname, "shared"),
     },
   },
   root: path.resolve(__dirname, "client"),
+  publicDir: path.resolve(__dirname, "client/public"),
   build: {
-    outDir: path.resolve(__dirname, "client/dev-dist","dist/public"),
+    outDir: path.resolve(__dirname, "client/dev-dist"),
     emptyOutDir: true,
   },
 });
