@@ -94,7 +94,7 @@ export default function History() {
   }, {} as Record<string, { total: number; items: Record<string, number> }>);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background bg-gray-50">
       <div className="container mx-auto px-4 py-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
