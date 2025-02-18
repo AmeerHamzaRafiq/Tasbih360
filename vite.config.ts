@@ -19,24 +19,46 @@ export default defineConfig({
       registerType: "autoUpdate",
       injectRegister: "auto",
 
-     
-    devOptions: {
-      enabled: true,
-      navigateFallback: 'index.html',
-      suppressWarnings: true,
-      type: 'module',
-    },
+      devOptions: {
+        enabled: true,
+        navigateFallback: "index.html",
+        suppressWarnings: true,
+        type: "module",
+      },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
+        globPatterns: ["**/*.{js,css,html,svg,png,ico}"],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
+        navigateFallback: "index.html", 
+        skipWaiting: true,
       },
-  
-     manifest: {
+
+      manifest: {
         name: "Tasbih360",
         short_name: "Tasbih360",
-        description: "Tasbih360 is a modern and convenient digital Tasbih counter app...",
+        description:
+          "Tasbih360 is a modern and convenient digital Tasbih counter app for counting dhikr and prayers.",
         theme_color: "#141414",
+        background_color: "#ffffff",
+        start_url: "/index.html",
+        display: "standalone",
+        orientation: "portrait",
+        id: "com.example.tasbih360",
+        scope: "/",
+        lang: "en",
+        dir: "ltr",
+        launch_handler: {
+          client_mode: "navigate-new",
+        },
+        categories: ["utilities", "spiritual", "education"],
+        iarc_rating_id: "e0e12a13-0d7f-4e7a-8d57-9b71a5b73229",
+        prefer_related_applications: true,
+        related_applications: [
+          // {
+          //   platform: "play",
+          //   url: "https://play.google.com/store/apps/details?id=com.example.tasbih360",
+          // },
+        ],
         icons: [
           {
             src: "https://i.postimg.cc/CL9qWn3t/Tasbihfavicon.png",
@@ -55,9 +77,20 @@ export default defineConfig({
             purpose: "any maskable",
           },
         ],
+        // screenshots: [
+        //   {
+        //     src: "https://example.com/screenshot1.png",
+        //     sizes: "1080x1920",
+        //     type: "image/png",
+        //   },
+        //   {
+        //     src: "https://example.com/screenshot2.png",
+        //     sizes: "1080x1920",
+        //     type: "image/png",
+        //   },
+        // ],
       },
     }),
-    
   ],
   resolve: {
     alias: {
