@@ -19,12 +19,19 @@ export default defineConfig({
       registerType: "autoUpdate",
       injectRegister: "auto",
 
-      devOptions: {
-        enabled: true,
-      },
+     
+    devOptions: {
+      enabled: true,
+      navigateFallback: 'index.html',
+      suppressWarnings: true,
+      type: 'module',
+    },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
+        globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
       },
+  
      manifest: {
         name: "Tasbih360",
         short_name: "Tasbih360",
@@ -50,6 +57,7 @@ export default defineConfig({
         ],
       },
     }),
+    
   ],
   resolve: {
     alias: {
