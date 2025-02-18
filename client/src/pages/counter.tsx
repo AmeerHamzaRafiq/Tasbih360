@@ -52,7 +52,7 @@ export default function Counter() {
       const history = JSON.parse(
         localStorage.getItem("tasbih_history") || "[]"
       );
-      history.push(historyItem);
+      history.unshift(historyItem);
       localStorage.setItem("tasbih_history", JSON.stringify(history));
     }
   }, [current, id, tasbih]);

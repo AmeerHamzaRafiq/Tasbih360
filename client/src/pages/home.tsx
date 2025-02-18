@@ -166,7 +166,7 @@ export default function Home() {
       className="min-h-screen bg-background flex flex-col"
     >
       <div className="container p-4 sm:p-6 md:p-8 max-w-2xl mx-auto flex-grow mt-4">
-        <div className="bg-gray-200 backdrop-blur-sm mb-6 py-4 px-4 w-full flex justify-between rounded-md shadow-md">
+        <div className="bg-gray-100 backdrop-blur-sm mb-6 py-4 px-4 w-full flex justify-between rounded-md shadow-md">
           <div>
             <h1 className="racing-sans-one text-3xl font-light">Tasbih360°</h1>
           </div>
@@ -176,7 +176,7 @@ export default function Home() {
               onClick={() => navigate("/history")}
               size="sm"
               variant="outline"
-              className="flex items-center gap-2 bg-slate-50"
+              className="flex items-center gap-2 bg-white"
             >
               <History className="h-4 w-4" />
               <span className="hidden sm:inline">History</span>
@@ -285,16 +285,22 @@ export default function Home() {
         ) : (
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
             {tasbihs.map((tasbih) => (
+
+
+
+
+
+
               <div
                 key={tasbih.id}
-                className="bg-slate-200 backdrop-blur-sm p-4 rounded-lg shadow-lg hover:shadow-xl transition-all cursor-pointer relative group border border-gray-300"
+                className="bg-gray-100 backdrop-blur-sm p-4 rounded-lg shadow-lg hover:shadow-xl transition-all cursor-pointer relative group border border-gray-300"
                 onClick={() => navigate(`/counter/${tasbih.id}`)}
               >
                 <div className="absolute top-2 right-2 flex gap-2 space-x-1 mt-6 mr-2">
                   <Button
-                    variant="secondary"
+                    variant="outline"
                     size="icon"
-                    className={`${buttonStyles.editButton} bg-slate-50 h-9 w-10`}
+                    className={`${buttonStyles.editButton} bg-white  h-9 w-10`}
                     onClick={(e) => handleEdit(tasbih, e)}
                   >
                     <Pencil className="h-4 w-4" />
