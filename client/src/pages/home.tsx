@@ -57,9 +57,14 @@ export default function Home() {
 
   useEffect(() => {
     const storedTasbihs = localStorage.getItem("tasbihs");
-    if (storedTasbihs) {
-      setTasbihs(JSON.parse(storedTasbihs));
+    try {
+      if (storedTasbihs) {
+        setTasbihs(JSON.parse(storedTasbihs));
+      }
+    } catch (error) {
+      console.error("Error parsing tasbihs from localStorage", error);
     }
+    
   }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
