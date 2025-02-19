@@ -29,7 +29,7 @@ export default defineConfig({
         globPatterns: ["**/*.{js,css,html,svg,png,ico}"],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
-        navigateFallback: "index.html", 
+        navigateFallback: "index.html",
         skipWaiting: true,
       },
 
@@ -53,12 +53,7 @@ export default defineConfig({
         categories: ["utilities", "spiritual", "education"],
         iarc_rating_id: "e0e12a13-0d7f-4e7a-8d57-9b71a5b73229",
         prefer_related_applications: true,
-        related_applications: [
-          // {
-          //   platform: "play",
-          //   url: "https://play.google.com/store/apps/details?id=com.example.tasbih360",
-          // },
-        ],
+        related_applications: [],
         icons: [
           {
             src: "https://i.postimg.cc/CL9qWn3t/Tasbihfavicon.png",
@@ -77,18 +72,6 @@ export default defineConfig({
             purpose: "any maskable",
           },
         ],
-        // screenshots: [
-        //   {
-        //     src: "https://example.com/screenshot1.png",
-        //     sizes: "1080x1920",
-        //     type: "image/png",
-        //   },
-        //   {
-        //     src: "https://example.com/screenshot2.png",
-        //     sizes: "1080x1920",
-        //     type: "image/png",
-        //   },
-        // ],
       },
     }),
   ],
@@ -101,7 +84,7 @@ export default defineConfig({
   root: path.resolve(__dirname, "client"),
   publicDir: path.resolve(__dirname, "client/public"),
   build: {
-    outDir: path.resolve(__dirname, "client/dev-dist"),
+    outDir: path.resolve(__dirname, "client/dist"),
     emptyOutDir: true,
   },
 });

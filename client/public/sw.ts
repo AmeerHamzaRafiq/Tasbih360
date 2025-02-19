@@ -14,4 +14,15 @@ self.addEventListener("fetch", (event: any) => {
     const fetchEvent = event as unknown as FetchEvent;
     console.log("Fetching:", fetchEvent.request.url);
   });
-  
+  if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/service-worker.js')
+      .then((registration) => {
+        console.log('ServiceWorker registered:', registration);
+      })
+      .catch((error) => {
+        console.error('ServiceWorker registration failed:', error);
+      });
+  });
+}
